@@ -11,10 +11,10 @@
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
 <script type="text/javascript">
     $(document).ready(function () {
+
         LoadRoomDetails();
         $("#txtRoomId").val("0");
         $("#btnSave").click(function () {
-            
             SaveRoomData();
         });
     });
@@ -33,7 +33,7 @@
                 $("#ddRoomType").val(data.RoomTypeId);
                 $("#txtRoomCapacity").val(data.RoomCapacity);
                 $("#txtRoomDescription").val(data.RoomDescription);
-                $("#imgRoom").attr('src', "../RoomImages/", data.RoomImage);
+                $("#imgRoom").attr('src', "../RoomImages/" + data.RoomImage);
                 $("#divAddRoom").modal('show');
                 $("#txtRoomId").val(data.RoomId);
                 $("#btnSave").text("Update");
@@ -41,37 +41,37 @@
             error: function () {
                 alert('There is some problem processing your request.');
             }
-        }); 
+        });
     }
 
     function DeleteRoom(roomId) {
-            var result = confirm("Are you sure you want to delete this room?")
-            if (result === false) {
-                return false; 
-            }
-            $.ajax({
-                async: true,
-                type: 'GET',
-                dataType: 'json',
-                data: { roomId },
-                url: '/Room/DeleteRoomDetails?roomId=' + roomId,
-                success: function (data) {
-                    if (data.success === true) {
-                        alert(data.message);
-                        LoadRoomDetails();
-                    }
-                },
-                error: function () {
-                    alert('There is some problem to process your request. Please try after sometimes.');
-                }
-            });
+        var result = confirm("Are you sure you want to delete this room?");
+        if (!result) {
+            return;
         }
+        $.ajax({
+            async: true,
+            type: 'GET',
+            dataType: 'json',
+            data: { roomId },
+            url: '/Room/DeleteRoomDetails?roomId=' + roomId,
+            success: function (data) {
+                if (data.success) {
+                    alert(data.message);
+                    LoadRoomDetails();
+                }
+            },
+            error: function () {
+                alert('There is some problem to process your request. Please try after sometimes.');
+            }
+        });
+    }
 
     function LoadRoomDetails() {
         $.ajax({
             async: true,
             type: 'GET',
-            dataType: 'HTML',
+            dataType: 'html',
             contentType: false,
             processData: false,
             url: '/Room/GetAllRooms',
@@ -93,9 +93,7 @@
         formData.append("RoomTypeId", $("#ddRoomType").val());
         formData.append("RoomCapacity", $("#txtRoomCapacity").val());
         formData.append("RoomDescription", $("#txtRoomDescription").val());
-        formData.append("Image", $("#UploadImage").get(0).files[0]);
 
-        //Chatttp
         var imageFile = $("#UploadImage").get(0).files[0];
         if (imageFile) {
             formData.append("Image", imageFile);
@@ -109,7 +107,7 @@
             processData: false,
             data: formData,
             success: function (data) {
-                if (data.success === true) {
+                if (data.success) {
                     alert(data.message);
                     ResetRoomInformation();
                     LoadRoomDetails();
@@ -122,17 +120,16 @@
     }
 
     function ResetRoomInformation() {
-        $("#txtRoomNumber").val('');
-        $("#txtRoomPrice").val('');
-        $("#ddBookingStatus").val(1);
-        $("#ddRoomType").val(1);
-        $("#txtRoomCapacity").val('');
-        $("#txtRoomDescription").val('');
-        $("#UploadImage").val('');
-        $("#txtRoomNumber").focus();
-        $("#imgRoom").removeAttr('src');
-        $("#txtRoomId").val(0);
-        $("#btnSave").val("Save");
+        $("#txtRoomId").val("0");
+        $("#txtRoomNumber").val("");
+        $("#txtRoomPrice").val("");
+        $("#ddBookingStatus").val("");
+        $("#ddRoomType").val("");
+        $("#txtRoomCapacity").val("");
+        $("#txtRoomDescription").val("");
+        $("#UploadImage").val("");
+        $("#imgRoom").attr('src', "");
+        $("#btnSave").text("Add"); // Ensure the button text is "Add"
     }
 
     function DisplayImage(result) {
@@ -146,7 +143,6 @@
     }
 </script>
 
-    
 <div style="margin-top: 50px">
     <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#divAddRoom" data-backdrop="static" data-keyboard="false">Add Room</button>
 </div>
@@ -160,60 +156,60 @@
             </div>
             <div class="modal-body">
                 <form id="formRoom">
-                  <div class="container">
-                    @Html.HiddenFor(model => model.RoomId, new { @id = "txtRoomId" })
-                    <div class="row">
-                        <div class="form-group col-md-6">
-                            @Html.LabelFor(expression: model => model.RoomNumber)
-                            @Html.TextBoxFor(expression: model => model.RoomNumber, htmlAttributes: new { @class = "form-control", id = "txtRoomNumber" })
-                            @Html.ValidationMessageFor(model => model.RoomNumber, null, new { @class = "text-danger" })
+                    <div class="container">
+                        @Html.HiddenFor(model => model.RoomId, new { @id = "txtRoomId" })
+                        <div class="row">
+                            <div class="form-group col-md-6">
+                                @Html.LabelFor(model => model.RoomNumber)
+                                @Html.TextBoxFor(model => model.RoomNumber, new { @class = "form-control", id = "txtRoomNumber" })
+                                @Html.ValidationMessageFor(model => model.RoomNumber, null, new { @class = "text-danger" })
+                            </div>
+                            <div class="form-group col-md-6">
+                                @Html.LabelFor(model => model.RoomPrice)
+                                @Html.TextBoxFor(model => model.RoomPrice, new { @class = "form-control", id = "txtRoomPrice" })
+                                @Html.ValidationMessageFor(model => model.RoomPrice, null, new { @class = "text-danger" })
+                            </div>
                         </div>
-                        <div class="form-group col-md-6">
-                            @Html.LabelFor(expression: model => model.RoomPrice)
-                            @Html.TextBoxFor(expression: model => model.RoomPrice, htmlAttributes: new { @class = "form-control", id = "txtRoomPrice" })
-                            @Html.ValidationMessageFor(model => model.RoomPrice, null, new { @class = "text-danger" })
+                        <div class="row">
+                            <div class="form-group col-md-6">
+                                @Html.LabelFor(model => model.BookingStatusId)
+                                @Html.DropDownListFor(model => model.BookingStatusId, Model.ListOfBookingStatus, new { @class = "form-control", id = "ddBookingStatus" })
+                                @Html.ValidationMessageFor(model => model.BookingStatusId, null, new { @class = "text-danger" })
+                            </div>
+                            <div class="form-group col-md-6">
+                                @Html.LabelFor(model => model.RoomTypeId)
+                                @Html.DropDownListFor(model => model.RoomTypeId, Model.ListOfRoomType, new { @class = "form-control", id = "ddRoomType" })
+                                @Html.ValidationMessageFor(model => model.RoomTypeId, null, new { @class = "text-danger" })
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group col-md-6">
+                                @Html.LabelFor(model => model.RoomCapacity)
+                                @Html.TextBoxFor(model => model.RoomCapacity, new { @class = "form-control", id = "txtRoomCapacity" })
+                                @Html.ValidationMessageFor(model => model.RoomCapacity, null, new { @class = "text-danger" })
+                            </div>
+                            <div class="form-group col-md-6">
+                                @Html.LabelFor(model => model.RoomDescription)
+                                @Html.TextBoxFor(model => model.RoomDescription, new { @class = "form-control", id = "txtRoomDescription" })
+                                @Html.ValidationMessageFor(model => model.RoomDescription, null, new { @class = "text-danger" })
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group col-md-6">
+                                @Html.LabelFor(model => model.RoomImage)
+                                <input id="UploadImage" type="file" class="form-control" name="roomImage" title="Load Image" onchange="DisplayImage(this)">
+                                <img id="imgRoom" height="200" width="200" style="border:solid" />
+                            </div>
                         </div>
                     </div>
-                    <div class="row">
-                        <div class="form-group col-md-6">
-                            @Html.LabelFor(expression: model => model.BookingStatusId)
-                            @Html.DropDownListFor(expression: model => model.BookingStatusId, selectList: Model.ListOfBookingStatus, htmlAttributes: new { @class = "form-control", id = "ddBookingStatus" })
-                            @Html.ValidationMessageFor(model => model.BookingStatusId, null, new { @class = "text-danger" })
-                        </div>
-                        <div class="form-group col-md-6">
-                            @Html.LabelFor(expression: model => model.RoomTypeId)
-                            @Html.DropDownListFor(expression: model => model.RoomTypeId, selectList: Model.ListOfRoomType, htmlAttributes: new { @class = "form-control", id = "ddRoomType" })
-                            @Html.ValidationMessageFor(model => model.RoomTypeId, null, new { @class = "text-danger" })
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="form-group col-md-6">
-                            @Html.LabelFor(expression: model => model.RoomCapacity)
-                            @Html.TextBoxFor(expression: model => model.RoomCapacity, htmlAttributes: new { @class = "form-control", id = "txtRoomCapacity" })
-                            @Html.ValidationMessageFor(model => model.RoomCapacity, null, new { @class = "text-danger" })
-                        </div>
-                        <div class="form-group col-md-6">
-                            @Html.LabelFor(expression: model => model.RoomDescription)
-                            @Html.TextBoxFor(expression: model => model.RoomDescription, htmlAttributes: new { @class = "form-control", id = "txtRoomDescription" })
-                            @Html.ValidationMessageFor(model => model.RoomDescription, null, new { @class = "text-danger" })
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="form-group col-md-6">
-                            @Html.LabelFor(expression: model => model.RoomImage)
-                            <input id="UploadImage" type="file" class="form-control" name="roomImage" title="Load Image" onchange="DisplayImage(this)">
-                            <img id="imgRoom" height="200" width="200" style="border:solid" />
-                        </div>
-                    </div>
-                </div>
                 </form>
                 <div class="modal-footer">
-                    <button id="btnSave" type="button" class="btn btn-success">Save</button> &nbsp;
-                    <button type="button" data-bs-dismiss="modal" class="btn btn-danger">Close</button>
+                    <button id="btnSave" type="button" class="btn btn-success">Add</button>
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal" onclick="ResetRoomInformation();">Close</button>
                 </div>
             </div>
         </div>
     </div>
 </div>
-<div style="margin-top: 70px"></div>
+<div style="margin-top: 30px"></div>
 <div id="divLoadRoomDetails"></div>

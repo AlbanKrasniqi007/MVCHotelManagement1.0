@@ -12,23 +12,23 @@
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
 <script type="text/javascript">
     $(document).ready(function () {
-        $(#btnSave).click(function () {
+        $("#btnSave").click(function () {
             if (!$("#formCustomerBooking").valid()) {
                 return;
             }
 
-            AddCostumerBooking();
+            AddCustomerBooking();
         });
     });
 
-    function AddCostumerBooking() {
+    function AddCustomerBooking() {
         var objBookingViewModel = {};
         objBookingViewModel.CustomerName = $("#txtCustomerName").val();
         objBookingViewModel.CustomerAddress = $("#txtCustomerAddress").val();
         objBookingViewModel.CustomerPhone = $("#txtCustomerPhone").val();
         objBookingViewModel.BookingFrom = $("#txtBookingFrom").val();
         objBookingViewModel.BookingTo = $("#txtBookingTo").val();
-        objBookingViewModel.AssingRoomId = $("#ddAssingRoom").val();
+        objBookingViewModel.AssignRoomId = $("#ddAssignRoom").val();
         objBookingViewModel.NumberOfMembers = $("#txtNumberOfMembers").val();
 
         $.ajax({
@@ -41,15 +41,13 @@
             success: function (data) {
 
             },
-            error: function() {
+            error: function () {
                 alert('There is some problem to process your request.');
             }
-        }) 
-
-        
+        })
     }
-
 </script>
+
 
 <div style="margin-top: 50px">
     <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#divNewBooking" data-backdrop="static" data-keyboard="false">New Booking</button>
@@ -60,16 +58,16 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h4 class="modal-title">New Booking</h4>
-                <button type="button" class="btn-close" data-bs-dismiss="modal">&times;</button>
+                <button type="button" class="btn-close" data-bs-dismiss="modal">×</button>
             </div>
             <div class="modal-body">
                 <form id="formCustomerBooking">
                     <div class="container">
                         <div class="row">
                             <div class="col-md-6">
-                                @Html.LabelFor(model => model.CostumerName, new { @class = "control-label" })
+                                @Html.LabelFor(model => model.CostumerName, new { @class = "form-control", @id = "txtCustomerName" })
                                 @Html.TextBoxFor(model => model.CostumerName, new { @class = "form-control", @id = "txtCustomerName" })
-                                @Html.ValidationMessageFor(model => model.CostumerName, null, new { @class = "text-danger"})
+                                @Html.ValidationMessageFor(model => model.CostumerName, null, new { @class = "text-danger" })
                             </div>
                             <div class="col-md-6">
                                 @Html.LabelFor(model => model.CostumerAddress, new { @class = "control-label" })
@@ -99,7 +97,7 @@
                             </div>
                             <div class="col-md-6">
                                 @Html.LabelFor(model => model.AssignRoomId, new { @class = "control-label" })
-                                @Html.DropDownListFor(model => model.AssignRoomId, @Model.ListOfRooms, new { @class = "form-control", @id = "ddAssingRoom" })
+                                @Html.DropDownListFor(model => model.AssignRoomId, @Model.ListOfRooms, new { @class = "form-control", @id = "ddAssignRoom" })
                                 @Html.ValidationMessageFor(model => model.AssignRoomId, null, new { @class = "text-danger" })
                             </div>
                         </div>
@@ -117,7 +115,7 @@
                     </div>
                 </form>
                 <div class="modal-footer">
-                    <button id="btnSave" type="button" class="btn btn-success">Save</button> &nbsp;
+                    <button id="btnSave" type="button" class="btn btn-success">Save</button>
                     <button type="button" data-bs-dismiss="modal" class="btn btn-danger">Close</button>
                 </div>
             </div>
@@ -125,3 +123,4 @@
     </div>
 </div>
 <div style="margin-top: 70px"></div>
+

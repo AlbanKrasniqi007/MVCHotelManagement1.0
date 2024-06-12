@@ -15,6 +15,7 @@ namespace MVCHotelManagement1._0.Controllers
         {
             objHotelDbEntities = new HotelDbEntities();
         }
+
         public ActionResult Index()
         {
             RoomViewModel objRoomViewModel = new RoomViewModel();
@@ -35,7 +36,6 @@ namespace MVCHotelManagement1._0.Controllers
         }
 
         [HttpPost]
-
         public ActionResult Index(RoomViewModel objRoomViewModel)
         {
             string message = string.Empty;
@@ -46,7 +46,6 @@ namespace MVCHotelManagement1._0.Controllers
             {
                 ImageUniqueName = Guid.NewGuid().ToString();
                 ActualImageName = ImageUniqueName + Path.GetExtension(objRoomViewModel.Image.FileName);
-
                 objRoomViewModel.Image.SaveAs(Server.MapPath("~/RoomImages/" + ActualImageName));
 
                 Room objRoom = new Room()
@@ -85,27 +84,26 @@ namespace MVCHotelManagement1._0.Controllers
             }
 
             objHotelDbEntities.SaveChanges();
-            return Json(data: new { message = "Room Succesfully.", success = true }, JsonRequestBehavior.AllowGet);
+            return Json(new { message = $"Room Successfully {message}", success = true }, JsonRequestBehavior.AllowGet);
         }
 
         public PartialViewResult GetAllRooms()
         {
-            IEnumerable<RoomDetailsViewModel> listOfRoomDetailsViewModels =
-                (from objRoom in objHotelDbEntities.Rooms
-                 join objBooking in objHotelDbEntities.BookingStatus on objRoom.BookingStatusId equals objBooking.BookingStatusId
-                 join objRoomType in objHotelDbEntities.RoomTypes on objRoom.RoomTypeId equals objRoomType.RoomTypeId
-                 where objRoom.IsActive == true
-                 select new RoomDetailsViewModel()
-                 {
-                     RoomNumber = objRoom.RoomNumber,
-                     RoomDescription = objRoom.RoomDescription,
-                     RoomCapacity = objRoom.RoomCapacity,
-                     RoomPrice = objRoom.RoomPrice,
-                     BookingStatus = objBooking.BookingStatus,
-                     RoomType = objRoomType.RoomTypeName,
-                     RoomImage = objRoom.RoomImage,
-                     RoomId = objRoom.RoomId,
-                 }).ToList();
+            IEnumerable<RoomDetailsViewModel> listOfRoomDetailsViewModels = (from objRoom in objHotelDbEntities.Rooms
+                                                                             join objBooking in objHotelDbEntities.BookingStatus on objRoom.BookingStatusId equals objBooking.BookingStatusId
+                                                                             join objRoomType in objHotelDbEntities.RoomTypes on objRoom.RoomTypeId equals objRoomType.RoomTypeId
+                                                                             where objRoom.IsActive == true
+                                                                             select new RoomDetailsViewModel()
+                                                                             {
+                                                                                 RoomNumber = objRoom.RoomNumber,
+                                                                                 RoomDescription = objRoom.RoomDescription,
+                                                                                 RoomCapacity = objRoom.RoomCapacity,
+                                                                                 RoomPrice = objRoom.RoomPrice,
+                                                                                 BookingStatus = objBooking.BookingStatus,
+                                                                                 RoomType = objRoomType.RoomTypeName,
+                                                                                 RoomImage = objRoom.RoomImage,
+                                                                                 RoomId = objRoom.RoomId,
+                                                                             }).ToList();
             return PartialView("_RoomDetailsPartial", listOfRoomDetailsViewModels);
         }
 
